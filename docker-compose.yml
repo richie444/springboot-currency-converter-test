@@ -1,0 +1,60 @@
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: currency-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: currency_converter
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - currency-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rate-service:
+    image: openjdk:17-slim
+    container_name: rate-service
+    volumes:
+      - ./rate-service/src:/app/src
+    working_dir: /app
+    command: >
+      sh -c "mkdir -p /app/classes && 
+             javac -d /app/classes -cp /app/classes /app/src/main/java/com/example/rateservice/StatusServer.java && 
+             java -cp /app/classes com.example.rateservice.StatusServer"
+    ports:
+      - "8081:8081"
+    networks:
+      - currency-network
+    restart: on-failure
+
+  main-service:
+    image: openjdk:17-slim
+    container_name: main-service
+    volumes:
+      - ./main-service/src:/app/src
+    working_dir: /app
+    command: >
+      sh -c "mkdir -p /app/classes && 
+             javac -d /app/classes -cp /app/classes /app/src/main/java/com/example/mainservice/StatusServer.java && 
+             java -cp /app/classes com.example.mainservice.StatusServer"
+    ports:
+      - "8080:8080"
+    networks:
+      - currency-network
+    depends_on:
+      - postgres
+    restart: on-failure
+
+networks:
+  currency-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
