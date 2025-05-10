@@ -1,3 +1,5 @@
+// This is a lightweight HTTP server for the Rate Service that provides a simple health check endpoint
+
 package com.example.rateservice;
 
 import com.sun.net.httpserver.HttpExchange;

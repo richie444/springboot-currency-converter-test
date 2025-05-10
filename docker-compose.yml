@@ -1,60 +1,59 @@
+version: '3.8'
+
 services:
   postgres:
     image: postgres:14-alpine
-    container_name: currency-db
+    container_name: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: currency_converter
+      POSTGRES_DB: currency_db
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - currency-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network
 
   rate-service:
-    image: openjdk:17-slim
+    build:
+      context: ./rate-service
     container_name: rate-service
-    volumes:
-      - ./rate-service/src:/app/src
-    working_dir: /app
-    command: >
-      sh -c "mkdir -p /app/classes && 
-             javac -d /app/classes -cp /app/classes /app/src/main/java/com/example/rateservice/StatusServer.java && 
-             java -cp /app/classes com.example.rateservice.StatusServer"
+    environment:
+      - EXCHANGE_RATE_API_KEY=${EXCHANGE_RATE_API_KEY:-your-api-key}
     ports:
       - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
-      - currency-network
-    restart: on-failure
+      - app-network
 
   main-service:
-    image: openjdk:17-slim
+    build:
+      context: ./main-service
     container_name: main-service
-    volumes:
-      - ./main-service/src:/app/src
-    working_dir: /app
-    command: >
-      sh -c "mkdir -p /app/classes && 
-             javac -d /app/classes -cp /app/classes /app/src/main/java/com/example/mainservice/StatusServer.java && 
-             java -cp /app/classes com.example.mainservice.StatusServer"
+    environment:
+      - RATE_SERVICE_URL=http://rate-service:8081
     ports:
       - "8080:8080"
-    networks:
-      - currency-network
     depends_on:
-      - postgres
-    restart: on-failure
-
-networks:
-  currency-network:
-    driver: bridge
+      postgres:
+        condition: service_healthy
+      rate-service:
+        condition: service_started
+    networks:
+      - app-network
 
 volumes:
   postgres-data:
+
+networks:
+  app-network:
+    driver: bridge
