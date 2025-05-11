@@ -18,6 +18,7 @@ The application consists of two Spring Boot services:
 - Jakarta Validation
 - WebClient
 - JWT Authentication
+-Swagger UI -  http://localhost:8080/swagger-ui/index.html#/
 
 ## Prerequisites
 
@@ -32,7 +33,7 @@ The application consists of two Spring Boot services:
 1. Clone the repository:
    ```
    git clone <repository-url>
-   cd currency-conversion-app
+   cd springboot-currency-converter-test
    ```
 
 2. Set your ExchangeRate-API key as an environment variable:
@@ -96,23 +97,10 @@ Authorization: Bearer eyJhbG...
 
 ##### Example using curl:
 ```bash
-curl -X GET http://localhost:8080/api/protected-endpoint \
+curl -X GET http://localhost:8080/api/convert \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 ```
 
-##### Troubleshooting
-- Make sure there's exactly one space between "Bearer" and the token
-- The token should be copied completely without any extra spaces
-- If using Postman, select "Bearer Token" in the Authorization tab and paste the token without "Bearer" prefix
-- Token expiration: JWT tokens typically expire after a set period (usually 24 hours)
-
-#### Default Users
-
-Two default users are created at startup:
-- Regular user: username=`user`, password=`password`, role=`ROLE_USER`
-- Admin user: username=`admin`, password=`admin123`, role=`ROLE_ADMIN`
-
-### User Management (Admin only)
 
 #### Create a new user
 ```
