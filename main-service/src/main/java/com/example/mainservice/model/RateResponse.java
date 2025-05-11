@@ -7,15 +7,6 @@ public class RateResponse {
     private String to;
     private BigDecimal rate;
 
-    public RateResponse() {
-    }
-
-    public RateResponse(String from, String to, BigDecimal rate) {
-        this.from = from;
-        this.to = to;
-        this.rate = rate;
-    }
-
     public String getFrom() {
         return from;
     }

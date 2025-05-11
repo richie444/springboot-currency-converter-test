@@ -1,16 +1,12 @@
-version: '3.8'
-
 services:
   postgres:
-    image: postgres:14-alpine
+    image: postgres:15-alpine
     container_name: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: currency_db
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
@@ -24,9 +20,19 @@ services:
   rate-service:
     build:
       context: ./rate-service
+      args:
+        - GRADLE_OPTS=-Dhttps.protocols=TLSv1.2,TLSv1.3 -Dhttps.cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
     container_name: rate-service
     environment:
-      - EXCHANGE_RATE_API_KEY=${EXCHANGE_RATE_API_KEY:-your-api-key}
+      - EXCHANGE_RATE_API_KEY=${EXCHANGE_RATE_API_KEY}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=currency_converter
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - JWT_SECRET=${JWT_SECRET:-thisIsAVerySecureKeyThatShouldBeInASecretVault}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      - JAVA_TOOL_OPTIONS=-Dhttps.protocols=TLSv1.2,TLSv1.3
     ports:
       - "8081:8081"
     depends_on:
@@ -38,9 +44,21 @@ services:
   main-service:
     build:
       context: ./main-service
+      args:
+        - GRADLE_OPTS=-Dhttps.protocols=TLSv1.2,TLSv1.3 -Dhttps.cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
     container_name: main-service
     environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=currency_converter
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
       - RATE_SERVICE_URL=http://rate-service:8081
+      - RATE_SERVICE_USERNAME=user
+      - RATE_SERVICE_PASSWORD=password
+      - JWT_SECRET=${JWT_SECRET:-thisIsAVerySecureKeyThatShouldBeInASecretVault}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-86400000}
+      - JAVA_TOOL_OPTIONS=-Dhttps.protocols=TLSv1.2,TLSv1.3
     ports:
       - "8080:8080"
     depends_on:
@@ -50,9 +68,6 @@ services:
         condition: service_started
     networks:
       - app-network
-
-volumes:
-  postgres-data:
 
 networks:
   app-network:

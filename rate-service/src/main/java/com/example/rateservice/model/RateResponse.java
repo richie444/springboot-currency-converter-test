@@ -1,14 +1,19 @@
 package com.example.rateservice.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 
+@Schema(description = "Response containing currency exchange rate information")
 public class RateResponse {
+    
+    @Schema(description = "Source currency code", example = "USD")
     private String from;
+    
+    @Schema(description = "Target currency code", example = "EUR")
     private String to;
+    
+    @Schema(description = "Exchange rate value", example = "0.85")
     private BigDecimal rate;
-
-    public RateResponse() {
-    }
 
     public RateResponse(String from, String to, BigDecimal rate) {
         this.from = from;
