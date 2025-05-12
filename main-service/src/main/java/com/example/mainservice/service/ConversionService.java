@@ -11,6 +11,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ConversionService {
@@ -56,6 +59,16 @@ public class ConversionService {
                 convertedAmount,
                 rate
         );
+    }
+
+    /**
+     * Retrieves all stored currency conversions
+     * @return List of all conversions
+     */
+    public List<Conversion> getAllConversions() {
+        return StreamSupport
+                .stream(conversionRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     private RateResponse fetchExchangeRate(String fromCurrency, String toCurrency) {
