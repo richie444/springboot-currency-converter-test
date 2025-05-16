@@ -6,9 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
@@ -18,21 +15,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.*;
 
 @WebMvcTest(ConversionController.class)
-@ContextConfiguration(classes = {ConversionController.class, ConversionControllerTest.TestSecurityConfig.class})
 class ConversionControllerTest {
     @Autowired
     MockMvc mockMvc;
     @MockBean
     ConversionService service;
-
-    @Configuration
-    static class TestSecurityConfig {
-        @Bean
-        public org.springframework.security.web.SecurityFilterChain securityFilterChain(org.springframework.security.config.annotation.web.builders.HttpSecurity http) throws Exception {
-            http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(authz -> authz.anyRequest().permitAll());
-            return http.build();
-        }
-    }
 
     @Test
     void convertCurrency_shouldReturnOk() throws Exception {
