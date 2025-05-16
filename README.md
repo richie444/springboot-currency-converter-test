@@ -299,4 +299,41 @@ cd rate-service
 
 cd ../main-service
 ./gradlew test
-```# Java-Spring-boot-Test
+```
+
+## Running Tests
+
+You can run the unit tests for each service using Gradle. Make sure you are in the correct service directory before running the commands below.
+
+### Run All Tests for Both Services
+
+```zsh
+cd rate-service
+./gradlew test
+
+cd ../main-service
+./gradlew test
+```
+
+### Run Only Controller or Service Tests
+
+You can run only specific test classes or patterns using the `--tests` option. For example:
+
+- Run only controller tests in rate-service:
+  ```zsh
+  cd rate-service
+  ./gradlew test --tests '*controller*'
+  ```
+- Run only service tests in main-service:
+  ```zsh
+  cd main-service
+  ./gradlew test --tests '*service*'
+  ```
+
+### View Test Reports
+
+After running tests, you can view the detailed test reports in your browser:
+- For rate-service: `rate-service/build/reports/tests/test/index.html`
+- For main-service: `main-service/build/reports/tests/test/index.html`
+
+Open these files with your browser to see test results and details.
