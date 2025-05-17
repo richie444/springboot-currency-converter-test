@@ -18,7 +18,7 @@ The application consists of two Spring Boot services:
 - Jakarta Validation
 - WebClient
 - JWT Authentication
--Swagger UI -  http://localhost:8080/swagger-ui/index.html#/
+-Swagger UI - http://localhost:8080/swagger-ui/index.html#/
 
 ## Prerequisites
 
