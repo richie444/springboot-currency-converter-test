@@ -50,6 +50,7 @@ The services will be available at:
 - Main Service: http://localhost:8080
 - Rate Service: http://localhost:8081
 
+
 ## API Usage
 
 ### Authentication
@@ -116,76 +117,6 @@ Request body:
 }
 ```
 
-Response:
-```json
-{
-  "id": 3,
-  "username": "newuser",
-  "role": "ROLE_USER"
-}
-```
-
-#### Get all users
-```
-GET /api/users
-```
-
-#### Get user details
-```
-GET /api/users/{username}
-```
-
-Response:
-```json
-{
-  "id": 3,
-  "username": "newuser",
-  "role": "ROLE_USER",
-  "enabled": true,
-  "createdAt": "2025-05-09T12:30:00"
-}
-```
-
-#### Change password
-```
-PUT /api/users/{username}/password
-```
-
-Request body:
-```json
-{
-  "newPassword": "newSecurePassword"
-}
-```
-
-#### Enable or disable a user
-```
-PUT /api/users/{username}/status
-```
-
-Request body:
-```json
-{
-  "enabled": false
-}
-```
-
-#### Update a user's role
-```
-PUT /api/users/{username}/role
-```
-
-Request body:
-```json
-{
-  "role": "ROLE_ADMIN"
-}
-```
-
-#### Delete a user
-```
-DELETE /api/users/{username}
-```
 
 ### Rate Service Endpoints
 
@@ -329,11 +260,3 @@ You can run only specific test classes or patterns using the `--tests` option. F
   cd main-service
   ./gradlew test --tests '*service*'
   ```
-
-### View Test Reports
-
-After running tests, you can view the detailed test reports in your browser:
-- For rate-service: `rate-service/build/reports/tests/test/index.html`
-- For main-service: `main-service/build/reports/tests/test/index.html`
-
-Open these files with your browser to see test results and details.
